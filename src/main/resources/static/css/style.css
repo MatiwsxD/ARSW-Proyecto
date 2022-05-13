@@ -1,0 +1,11 @@
+.container path {
+    fill: black;
+    stroke: aquamarine;
+    stroke-width: 2px;
+}
+
+.container :hover{
+    fill: aqua;
+}
+
+
