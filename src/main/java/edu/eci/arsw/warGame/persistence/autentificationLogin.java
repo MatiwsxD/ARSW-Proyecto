@@ -57,8 +57,8 @@ public class autentificationLogin extends ConexionSQL{
             while(rs.next()){
                 Player player = new Player();
                 player.setUsuario(rs.getString("idusuario"));
-                player.setPaisInicial(rs.getString("color"));
-                player.setColorPlayer(rs.getString("paisinicial"));
+                player.setPaisInicial(rs.getString("paisinicial"));
+                player.setColorPlayer(rs.getString("color"));
                 datos.add(player);
             }
             st.close();
@@ -73,11 +73,11 @@ public class autentificationLogin extends ConexionSQL{
     }
 
 
-    public  void insertRegiones(String id, String dueño, String canttropas){
+    public  void insertRegion(String id, String dueño, String canttropas){
         try {
             Connection conexion = conectar();
             st = conexion.createStatement();
-            String sql = "insert into empleados(nombre,telefono,mail,cedula) values('" + id + "','" + dueño + "','" + canttropas + "');";
+            String sql = "insert into regiones(id,dueño,canttropas) values('" + id + "','" + dueño + "','" + canttropas + "');";
             st.execute(sql);
             st.close();
             conexion.close();
@@ -92,7 +92,7 @@ public class autentificationLogin extends ConexionSQL{
         try {
             Connection conexion = conectar();
             st = conexion.createStatement();
-            String sql = "update empleados set dueño='" + dueño + "',canttropas='" + canttropas + "' where id='" + id + "'; ";
+            String sql = "update regiones set dueño='" + dueño + "',canttropas='" + canttropas + "' where id='" + id + "'; ";
             st.executeUpdate(sql);
             st.close();
             conexion.close();

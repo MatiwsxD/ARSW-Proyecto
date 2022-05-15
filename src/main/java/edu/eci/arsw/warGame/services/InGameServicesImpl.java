@@ -2,6 +2,7 @@ package edu.eci.arsw.warGame.services;
 
 import edu.eci.arsw.warGame.model.Player;
 
+import edu.eci.arsw.warGame.model.Region;
 import edu.eci.arsw.warGame.persistence.autentificationLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,5 +29,28 @@ public class InGameServicesImpl implements InGameServices{
         autentificationLogin connection = new autentificationLogin();
         ArrayList<Player> data = connection.getTable();
         return data;
+    }
+    @Override
+    public void registerRegiones(ArrayList<Region> arrayRegiones){
+        autentificationLogin connection = new autentificationLogin();
+        for(int i =0; i<arrayRegiones.size(); i++) {
+            Region temp = arrayRegiones.get(i);
+            connection.insertRegion(temp.getId(), temp.getDueño(), temp.getCanttropas());
+        }
+    }
+
+    @Override
+    public void reiniciarGame(ArrayList<Region> arrayRegiones){
+        autentificationLogin connection = new autentificationLogin();
+        for(int i =0; i<arrayRegiones.size(); i++) {
+            Region temp = arrayRegiones.get(i);
+            connection.actualizarRegiones(temp.getId(), temp.getDueño(), "30");
+        }
+    }
+
+    @Override
+    public void updateRegiones(Region region) throws ServicesException {
+        autentificationLogin connection = new autentificationLogin();
+        connection.actualizarRegiones(region.getId(), region.getDueño(), region.getCanttropas());
     }
 }
