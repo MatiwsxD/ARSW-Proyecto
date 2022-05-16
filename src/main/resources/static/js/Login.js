@@ -1,8 +1,10 @@
 var url;
 
 var consultaUser = async()=>{
-    user = document.getElementById("Autor").value;
-    url = 'http://localhost:8080/consult/' + user
+    user = btoa( document.getElementById("Autor").value);
+
+    password = btoa(document.getElementById("pass").value);
+    url = 'http://localhost:8080/consult/' + user + '/' + password
     data1 = await fetch(url, {
         mode: 'no-cors',
         method: 'GET',

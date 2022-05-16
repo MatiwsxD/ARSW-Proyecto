@@ -19,11 +19,11 @@ public class UserController {
     @Qualifier("WarGameLogin")
     WarGameLogin login;
 
-    @GetMapping("/consult/{userName}")
-    public ResponseEntity<?> register(@PathVariable String userName) {
+    @GetMapping("/consult/{userName}/{password}")
+    public ResponseEntity<?> register(@PathVariable(value = "userName") String userName, @PathVariable(value = "password") String contraseña) {
        
         try {
-            return new ResponseEntity<>(login.Login(userName), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(login.Login(userName, contraseña), HttpStatus.ACCEPTED);
 
         } catch (Exception ex) {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);

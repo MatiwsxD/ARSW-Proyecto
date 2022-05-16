@@ -3,7 +3,6 @@ let cont = 1;
 let dinero = 0;
 let start = true;
 var colorCliente;
-let departamentosProp=[];
 let players;
 let regiones = [];
 var stompClient = null;
@@ -14,7 +13,7 @@ let aumDinero = function(){
         dinero++
         let T1 =document.getElementById("Dinero");
         T1.textContent=dinero;
-    }, 1300-(cont)*40);
+    }, 1300-((cont)*40));
 }
 
 
@@ -43,7 +42,6 @@ let loadAndAddlistener = function(){
     }
     onStart();
     getPlayers();
-    //Put de todo el mapa
 }
 var agregarElemento = function (id1,tropas){
     const {x,y} = puntoMedio(id1);
@@ -160,13 +158,8 @@ let comprarUnidades = function(bid){
 
 let onStart = function(){
     if (start){
-        //setPaisColor(id, colorCliente);
-        //Usuario = new Player(localStorage.getItem("Usuario"), id, colorCliente);
-        
-        //addPlayer();
-
         start =false;
-        //help();
+
     }
 
 }
@@ -274,23 +267,24 @@ var getRegion = async(id)=>{
     let dueño = z.dueño;
     let userTem1 = players.filter(function(players){return players.usuario == dueño});
     let user = userTem1[0];
-    let color = user.colorPlayer;
+    let color;
+    if(user.colorPlayer != undefined){
+        color = user.colorPlayer;
+    }
+    else{
+        color ='#000000'
+
+    }
+    
 
     let region = regiones.filter(function(regiones){return regiones.id == z.id;})
     let obj1 = region[0];
     obj1.setDueño(z.dueño);
     obj1.settropasTotal(z.canttropas);
-    console.log(obj1);
     setPaisColor(z.id, color);
     agregarElemento(z.id, z.canttropas);
 
-
-
-
-
 }
-
-
 
 var clienteWeb = async()=>{
     var socket = await new SockJS('/wargamews');
@@ -301,7 +295,7 @@ var clienteWeb = async()=>{
             getRegion(id.body);
         })
     });
-     //Aqui va una funcion de que quiere hacer );
+
 }
 aumDinero();
 clienteWeb();

@@ -1,6 +1,8 @@
 package edu.eci.arsw.warGame.persistence;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ConexionSQL {
@@ -15,7 +17,8 @@ public class ConexionSQL {
             conn=DriverManager.getConnection(url,usuario,clave);
 
         } catch (Exception e) {
-            System.out.println("Error conexion base de datos");
+            Logger.getLogger(autentificationLogin.class.getName()).log(Level.SEVERE, null, e);
+            //System.out.println("Error conexion base de datos");
         }
         return conn;
     }
