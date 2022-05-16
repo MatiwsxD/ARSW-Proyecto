@@ -7,15 +7,10 @@ import edu.eci.arsw.warGame.services.ServicesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping(value ="/wargame") 
@@ -75,6 +70,15 @@ public class InGameController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (ServicesException ex){
             return new ResponseEntity<>(ex.getLocalizedMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
+    @RequestMapping(value = "/getRegion/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getRegion(@PathVariable(name = "id") String id){
+        try{
+
+            return new ResponseEntity<>(servicios.getRegion(id),HttpStatus.ACCEPTED);
+        } catch (ServicesException ex){
+            return new ResponseEntity<>(ex.getLocalizedMessage(),HttpStatus.NOT_FOUND);
         }
     }
 

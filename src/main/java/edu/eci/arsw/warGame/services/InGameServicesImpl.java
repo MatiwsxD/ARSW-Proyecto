@@ -4,14 +4,10 @@ import edu.eci.arsw.warGame.model.Player;
 
 import edu.eci.arsw.warGame.model.Region;
 import edu.eci.arsw.warGame.persistence.autentificationLogin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class InGameServicesImpl implements InGameServices{
@@ -52,5 +48,11 @@ public class InGameServicesImpl implements InGameServices{
     public void updateRegiones(Region region) throws ServicesException {
         autentificationLogin connection = new autentificationLogin();
         connection.actualizarRegiones(region.getId(), region.getDueño(), region.getCanttropas());
+    }
+
+    @Override
+    public Region getRegion(String id){
+        autentificationLogin connection = new autentificationLogin();
+        return connection.getRegion(id);
     }
 }

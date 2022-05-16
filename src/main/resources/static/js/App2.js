@@ -1,4 +1,5 @@
 let Usuario;
+let cont = 1;
 let dinero = 0;
 let start = true;
 var colorCliente;
@@ -13,7 +14,7 @@ let aumDinero = function(){
         dinero++
         let T1 =document.getElementById("Dinero");
         T1.textContent=dinero;
-    }, 700-(departamentosProp)*10);
+    }, 1300-(cont)*40);
 }
 
 
@@ -47,7 +48,6 @@ let loadAndAddlistener = function(){
 var agregarElemento = function (id1,tropas){
     const {x,y} = puntoMedio(id1);
     if(start){
-        console.log(tropas);
         var regiones = document.getElementById("regiones");
         var center = document.createElementNS('http://www.w3.org/2000/svg', "g");
         center.innerHTML = '<text x='+ '"' + (x-10) + '"' + 'y =' + '"' + (y+5) + '" style="fill:#1effd6;font-weight: bold;">'+tropas+'</text>';
@@ -61,7 +61,6 @@ var agregarElemento = function (id1,tropas){
                 g[i].style.display="none"
             }
         }
-        console.log(tropas)
         var regiones = document.getElementById("regiones");
         var center = document.createElementNS('http://www.w3.org/2000/svg', "g");
         center.innerHTML = '<text x='+ '"' + (x-10) + '"' + 'y =' + '"' + (y+5) + '" style="fill:#1effd6;font-weight: bold;">'+tropas+'</text>';
@@ -90,35 +89,53 @@ let atacarRegiones = function (){
         window.alert("Seleccione la region de donde desea movilizar las tropas");
         //isMyProperty(conflicto[0])
     }
-
-    else if (conflicto.length ==2 && isMyProperty(conflicto[1])){
-        console.log(conflicto);
+    else if (conflicto.length ==2 && isMyProperty(conflicto[1]) && ! isMyProperty(conflicto[0])){
         let atacado = regiones.filter(function(regiones){return regiones.id == conflicto[0];})
         let obj1 = atacado[0];
         let atacante = regiones.filter(function(regiones){return regiones.id == conflicto[1];})
         let obj2 = atacante[0];
         let tropasAtacado = parseInt(obj1.getCanttropas);
-        let tropasAtacante = window.prompt('Dijite numero de tropas que desea comprar para esta region');
-        if(tropasAtacante>tropasAtacado && (parseInt(tropasAtacante)<obj2.getCanttropas)){
-            obj1.setDueño(obj2.getDueño);
-            let x =Math.abs(parseInt(obj1.getCanttropas)-parseInt(obj2.getCanttropas));
-            obj1.settropasTotal(x);
-            let obj11 = document.getElementById(obj1.getId())
-            let num = obj11.getAttribute("text")
-            console.log(num);
+        let tropasAtacante = window.prompt('Dijite numero de tropas con las que desea atacar esta region');
 
-            console.log(obj1);
-            updateRegion(obj1)
-            //console.log(obj1);
+        if(parseInt(tropasAtacante)>tropasAtacado && parseInt(tropasAtacante)<parseInt(obj2.getCanttropas)){
             obj2.settropasTotal(parseInt(obj2.getCanttropas)-parseInt(tropasAtacante));
-            console.log(obj2)
-            updateRegion(obj2)
-            console.log("Lo que le quedaria al atacante" + obj2.getCanttropas);
+            let xx =Math.abs(parseInt(obj1.getCanttropas)-parseInt(tropasAtacante));
+            obj1.setDueño(obj2.getDueño);
+            obj1.settropasTotal(xx);
+            let jugTemp1 = obj1.getDueño;
+            let userTem1 = players.filter(function(players){return players.usuario == jugTemp1});
+            let color = userTem1[0].colorPlayer;
+            setPaisColor(obj1.getId, color);
+            agregarElemento(obj1.getId, obj1.getCanttropas);
+            agregarElemento(obj2.getId, obj2.getCanttropas);
+            updateRegion(obj1);
+            updateRegion(obj2);
+            conflicto = [];
+            cont ++;
         }
+        else if (tropasAtacado>tropasAtacante && parseInt(tropasAtacante)<parseInt(obj2.getCanttropas)){
+            //console.log("Pasa por aqui 2 "+xx);
+            let xx =Math.abs(parseInt(obj1.getCanttropas)-parseInt(tropasAtacante));
+            obj2.settropasTotal(parseInt(obj2.getCanttropas)-parseInt(tropasAtacante));
+            obj1.settropasTotal(xx);
+            agregarElemento(obj1.getId, obj1.getCanttropas);
+            agregarElemento(obj2.getId, obj2.getCanttropas);
+            updateRegion(obj1);
+            updateRegion(obj2);
+            conflicto = [];
+            
+        }
+        else{
+            window.alert("No dispone de las suficientes tropas");
+            conflicto = [];
+        }
+        
+
     }
+
     else{
         window.alert("La region de donde desea movilizar las tropas no le pertenece");
-        conflicto = [];
+        
     }
 
 
@@ -138,6 +155,7 @@ let comprarUnidades = function(bid){
     else{
         window.alert("No tiene el dinero suficiente o no selecciono el numero de tropas");
     }
+    conflicto = [];
 }
 
 let onStart = function(){
@@ -148,7 +166,7 @@ let onStart = function(){
         //addPlayer();
 
         start =false;
-        help();
+        //help();
     }
 
 }
@@ -170,6 +188,8 @@ var updateRegion = async(region)=>{
         body: JSON.stringify(region),
         headers: {"Content-type" : "application/json"}
     }).then(res=>console.log(res));
+
+    stompClient.send('/events/ws', {},region.getId);
 
 
 }
@@ -228,6 +248,8 @@ var updateAllRegions = async()=>{
         headers: {"Content-type" : "application/json"}
     }).then(res=>console.log(res));
 
+    
+
 }
 
 
@@ -240,14 +262,47 @@ var putAllMap = async()=>{
 
 }
 
+var getRegion = async(id)=>{
+    z = await fetch('http://localhost:8080/wargame/getRegion/' + id  + '/', {
+        mode: 'no-cors',
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json"
+        }
+    }).then(response => response.json());
+
+    let dueño = z.dueño;
+    let userTem1 = players.filter(function(players){return players.usuario == dueño});
+    let user = userTem1[0];
+    let color = user.colorPlayer;
+
+    let region = regiones.filter(function(regiones){return regiones.id == z.id;})
+    let obj1 = region[0];
+    obj1.setDueño(z.dueño);
+    obj1.settropasTotal(z.canttropas);
+    console.log(obj1);
+    setPaisColor(z.id, color);
+    agregarElemento(z.id, z.canttropas);
 
 
-var help = async()=>{
+
+
+
+}
+
+
+
+var clienteWeb = async()=>{
     var socket = await new SockJS('/wargamews');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (){});
-    //stompClient.subscribe('/events/',function(){}) //Aqui va una funcion de que quiere hacer );
+    stompClient.connect({}, function (){
+        stompClient.subscribe('/events/ws',function(id){
+            console.log(id.body);
+            getRegion(id.body);
+        })
+    });
+     //Aqui va una funcion de que quiere hacer );
 }
 aumDinero();
-
+clienteWeb();
 //loadAndAddlistener();

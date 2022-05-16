@@ -1,8 +1,8 @@
 package edu.eci.arsw.warGame.persistence;
 
 import edu.eci.arsw.warGame.model.Player;
+import edu.eci.arsw.warGame.model.Region;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -12,7 +12,6 @@ public class autentificationLogin extends ConexionSQL{
     ResultSet rs;
 
     public boolean getUserLogin(String iduser) {
-        Boolean onData;
         try{
             Connection conexion = conectar();
             st = conexion.createStatement();
@@ -99,6 +98,28 @@ public class autentificationLogin extends ConexionSQL{
         } catch (Exception e) {
             System.out.println("No se pudo actualizar");
         }
+    }
+
+    public Region getRegion (String idRegion){
+        Region region = new Region();
+        try {
+            Connection conexion = conectar();
+            st = conexion.createStatement();
+            String sql = "select * from regiones where id='" + idRegion + "';";
+            rs = st.executeQuery(sql);
+            rs.next();
+            region.setId(rs.getString("id"));
+            region.setCanttropas(rs.getString("canttropas"));
+            region.setDueño(rs.getString("dueño"));
+            st.close();
+            conexion.close();
+
+
+        }catch (Exception e){
+            System.out.println("Error al Obtener la region");
+
+        }
+        return region;
     }
 
     
